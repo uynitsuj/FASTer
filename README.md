@@ -8,7 +8,7 @@ tags:
 
 # FAST: Efficient Action Tokenization for Vision-Language-Action Models
 
-This is the official repo for the FAST action tokenizer.
+This is the official repo for the [FAST action tokenizer](https://www.pi.website/research/fast).
 
 The action tokenizer maps any sequence of robot actions into a sequence of dense, discrete **action tokens** for training autoregressive VLA models.
 
