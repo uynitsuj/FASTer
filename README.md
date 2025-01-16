@@ -1,199 +1,72 @@
 ---
 library_name: transformers
-tags: []
+license: apache-2.0
+tags:
+- robotics
+- tokenizer
 ---
 
-# Model Card for Model ID
+# FAST: Efficient Action Tokenization for Vision-Language-Action Models
 
-<!-- Provide a quick summary of what the model is/does. -->
+This is the official repo for the FAST action tokenizer.
 
+The action tokenizer maps any sequence of robot actions into a sequence of dense, discrete **action tokens** for training autoregressive VLA models.
 
+Here, we provide:
+1. FAST+, our *universal* action tokenizer, trained on 1M real robot action sequences.
+2. Code for quickly training *new* action tokenizers on your custom dataset.
 
-## Model Details
+## Installation
 
-### Model Description
+FAST can be used as a convenient HuggingFace AutoProcessor. To use it, simply install the `transformers` package (and `scipy` for the underlying DCT algorithm).
 
-<!-- Provide a longer summary of what this model is. -->
+```
+pip install transformers scipy
+```
 
-This is the model card of a 🤗 transformers model that has been pushed on the Hub. This model card has been automatically generated.
+## Using the Universal Action Tokenizer
 
-- **Developed by:** [More Information Needed]
-- **Funded by [optional]:** [More Information Needed]
-- **Shared by [optional]:** [More Information Needed]
-- **Model type:** [More Information Needed]
-- **Language(s) (NLP):** [More Information Needed]
-- **License:** [More Information Needed]
-- **Finetuned from model [optional]:** [More Information Needed]
+We recommend applying the tokenizer to 1-second action "chunks" that have been pre-normalized to a range of [-1...1] 
+(we use quantile normalization for this step -- check our paper). Encoding and decoding support batched inference.
 
-### Model Sources [optional]
+```
+import numpy as np
+from transformers import AutoProcessor
 
-<!-- Provide the basic links for the model. -->
+# Load the tokenizer from the Hugging Face hub
+tokenizer = AutoProcessor.from_pretrained("physical-intelligence/fast", trust_remote_code=True)
 
-- **Repository:** [More Information Needed]
-- **Paper [optional]:** [More Information Needed]
-- **Demo [optional]:** [More Information Needed]
+# Tokenize & decode action chunks (we use dummy data here)
+action_data = np.random.rand(256, 50, 14)    # one batch of action chunks
+tokens = tokenizer(action_data)              # tokens = list[int]
+decoded_actions = tokenizer.decode(tokens)
+```
 
-## Uses
+**Note**: During decoding, the tokenizer needs to map the decoded sequence of actions back into a `[time_horizon, action_dim]` matrix. 
+There are multiple ways to provide the necessary dimensions to the tokenizer: (1) they automatically get saved on the first `forward()` call, (2) you can set them manually as arguments to the `decode()` call
 
-<!-- Address questions around how the model is intended to be used, including the foreseeable users of the model and those affected by the model. -->
 
-### Direct Use
+## Training a new Action Tokenizer on Your Own Data
 
-<!-- This section is for the model use without fine-tuning or plugging into a larger ecosystem/app. -->
+In our experiments, we found the FAST+ universal tokenizer to work well across a wide range of robot setups, action dimensions, and control frequencies.
+If you, however, want to train a custom FAST tokenizer for your dataset at hand, it is very easy using the `.fit()` convenience function we provide.
+When called on a dataset of action chunks (of the same or different lengths), it returns a new tokenizer instance, which you can save and optionally push 
+to the HuggingFace hub. Training should typically only take a few seconds to minutes.
 
-[More Information Needed]
+```
+# First, we download the tokenizer from the Hugging Face model hub
+# Here, we will not use the pre-trained tokenizer weights, but only the source code
+# to train a new tokenizer on our own data.
+tokenizer = AutoProcessor.from_pretrained("physical-intelligence/fast", trust_remote_code=True)
 
-### Downstream Use [optional]
+# Load your action data for tokenizer training
+# Chunks do not need to be of the same length, we will use dummy data
+action_data = np.random.rand(4000, 50, 14)
 
-<!-- This section is for the model use when fine-tuned for a task, or when plugged into a larger ecosystem/app -->
+# Train the new tokenizer, depending on your dataset size this can take a few minutes
+tokenizer = tokenizer.fit(action_data)
 
-[More Information Needed]
-
-### Out-of-Scope Use
-
-<!-- This section addresses misuse, malicious use, and uses that the model will not work well for. -->
-
-[More Information Needed]
-
-## Bias, Risks, and Limitations
-
-<!-- This section is meant to convey both technical and sociotechnical limitations. -->
-
-[More Information Needed]
-
-### Recommendations
-
-<!-- This section is meant to convey recommendations with respect to the bias, risk, and technical limitations. -->
-
-Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model. More information needed for further recommendations.
-
-## How to Get Started with the Model
-
-Use the code below to get started with the model.
-
-[More Information Needed]
-
-## Training Details
-
-### Training Data
-
-<!-- This should link to a Dataset Card, perhaps with a short stub of information on what the training data is all about as well as documentation related to data pre-processing or additional filtering. -->
-
-[More Information Needed]
-
-### Training Procedure
-
-<!-- This relates heavily to the Technical Specifications. Content here should link to that section when it is relevant to the training procedure. -->
-
-#### Preprocessing [optional]
-
-[More Information Needed]
-
-
-#### Training Hyperparameters
-
-- **Training regime:** [More Information Needed] <!--fp32, fp16 mixed precision, bf16 mixed precision, bf16 non-mixed precision, fp16 non-mixed precision, fp8 mixed precision -->
-
-#### Speeds, Sizes, Times [optional]
-
-<!-- This section provides information about throughput, start/end time, checkpoint size if relevant, etc. -->
-
-[More Information Needed]
-
-## Evaluation
-
-<!-- This section describes the evaluation protocols and provides the results. -->
-
-### Testing Data, Factors & Metrics
-
-#### Testing Data
-
-<!-- This should link to a Dataset Card if possible. -->
-
-[More Information Needed]
-
-#### Factors
-
-<!-- These are the things the evaluation is disaggregating by, e.g., subpopulations or domains. -->
-
-[More Information Needed]
-
-#### Metrics
-
-<!-- These are the evaluation metrics being used, ideally with a description of why. -->
-
-[More Information Needed]
-
-### Results
-
-[More Information Needed]
-
-#### Summary
-
-
-
-## Model Examination [optional]
-
-<!-- Relevant interpretability work for the model goes here -->
-
-[More Information Needed]
-
-## Environmental Impact
-
-<!-- Total emissions (in grams of CO2eq) and additional considerations, such as electricity usage, go here. Edit the suggested text below accordingly -->
-
-Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
-
-- **Hardware Type:** [More Information Needed]
-- **Hours used:** [More Information Needed]
-- **Cloud Provider:** [More Information Needed]
-- **Compute Region:** [More Information Needed]
-- **Carbon Emitted:** [More Information Needed]
-
-## Technical Specifications [optional]
-
-### Model Architecture and Objective
-
-[More Information Needed]
-
-### Compute Infrastructure
-
-[More Information Needed]
-
-#### Hardware
-
-[More Information Needed]
-
-#### Software
-
-[More Information Needed]
-
-## Citation [optional]
-
-<!-- If there is a paper or blog post introducing the model, the APA and Bibtex information for that should go in this section. -->
-
-**BibTeX:**
-
-[More Information Needed]
-
-**APA:**
-
-[More Information Needed]
-
-## Glossary [optional]
-
-<!-- If relevant, include terms and calculations in this section that can help readers understand the model or model card. -->
-
-[More Information Needed]
-
-## More Information [optional]
-
-[More Information Needed]
-
-## Model Card Authors [optional]
-
-[More Information Needed]
-
-## Model Card Contact
-
-[More Information Needed]
+# Save the new tokenizer, optionally push it to the Hugging Face model hub
+tokenizer.save_pretrained("<your_local_path>")
+tokenizer.push_to_hub("YourUsername/my_new_tokenizer")
+```
