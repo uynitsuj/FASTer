@@ -28,7 +28,7 @@ This approach cuts down inference-to-action time by roughly half, enabling more 
 
 ### Visual Demonstration
 
-Full DCT Reconstruction  |  0-4th DCT Harmonics
+Full DCT Action Sequence Reconstruction  |  0-4th DCT Harmonics Reconstruction
 :-------------------------:|:-------------------------:
 ![](https://raw.githubusercontent.com/uynitsuj/FASTer/refs/heads/main/scripts/action_trajectories_base_fast_coeff_9.png)  |  ![](https://github.com/uynitsuj/FASTer/blob/main/scripts/action_trajectories_base_fast_coeff_4.png)
 
