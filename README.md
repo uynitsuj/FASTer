@@ -1,4 +1,4 @@
-Custom implementation for DCT early stopping technique to decode only the first few DCT coefficients from PaLi-Gemma rather than waiting for a full action chunk inference to complete. (This can cut inference time down by roughly half since DCT around the first 3 coefficients are typically enough for coarse action token reconstruction)
+Custom implementation for DCT early stopping technique to decode only the first few DCT coefficients from PaLi-Gemma rather than waiting for a full action chunk inference to complete. (This can cut down inference to action time by roughly half since DCT around the first 3 coefficients are typically enough for a coarse action token reconstruction)
 
 ---
 library_name: transformers
