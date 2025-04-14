@@ -28,6 +28,12 @@ This approach cuts down inference-to-action time by roughly half, enabling more 
 
 ### Visual Demonstration
 
+Full DCT Reconstruction  |  0-4th DCT Harmonics
+:-------------------------:|:-------------------------:
+![](https://raw.githubusercontent.com/uynitsuj/FASTer/refs/heads/main/scripts/action_trajectories_base_fast_coeff_9.png)  |  ![](https://github.com/uynitsuj/FASTer/blob/main/scripts/action_trajectories_base_fast_coeff_4.png)
+
+This shows a side by side comparison of reconstructions from full DCT coefficients (left) compared to DCT early stopping (right).
+
 ![fullDCT](https://raw.githubusercontent.com/uynitsuj/FASTer/refs/heads/main/scripts/action_trajectories_base_fast_coeff_9.png)
 
 **Figure 1: Full DCT Reconstruction**
