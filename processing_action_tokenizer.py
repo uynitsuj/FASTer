@@ -78,16 +78,29 @@ class UniversalActionProcessor(ProcessorMixin):
         decoded_actions = []
         for token in tokens:
             try:
+                decoded_dct_coeff = np.zeros((self.time_horizon, self.action_dim))
+                
                 decoded_tokens = self.bpe_tokenizer.decode(token)
-                decoded_dct_coeff = np.array(list(map(ord, decoded_tokens))) + self.min_token
-                decoded_dct_coeff = decoded_dct_coeff.reshape(-1, self.action_dim)
-                assert (
-                    decoded_dct_coeff.shape
-                    == (
-                        self.time_horizon,
-                        self.action_dim,
-                    )
-                ), f"Decoded DCT coefficients have shape {decoded_dct_coeff.shape}, expected ({self.time_horizon}, {self.action_dim})"
+                _decoded_dct_coeff = np.array(list(map(ord, decoded_tokens))) + self.min_token
+                
+                _decoded_dct_coeff = _decoded_dct_coeff[:len(_decoded_dct_coeff) - (len(_decoded_dct_coeff) % self.action_dim)] # implementation for DCT early stopping
+                
+                i = len(_decoded_dct_coeff) // self.action_dim
+                
+                _decoded_dct_coeff = _decoded_dct_coeff.reshape(-1, self.action_dim)
+                                
+                decoded_dct_coeff[:i] = _decoded_dct_coeff
+                
+                # Commented out assert for DCT early stopping; resulting DCT coeffs don't include all frequency bins
+                
+                # assert ( 
+                #     decoded_dct_coeff.shape
+                #     == (
+                #         self.time_horizon,
+                #         self.action_dim,
+                #     )
+                # ), f"Decoded DCT coefficients have shape {decoded_dct_coeff.shape}, expected ({self.time_horizon}, {self.action_dim})"
+                
             except Exception as e:
                 print(f"Error decoding tokens: {e}")
                 print(f"Tokens: {token}")
