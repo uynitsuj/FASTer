@@ -1,0 +1,62 @@
+import numpy as np
+from transformers import AutoProcessor
+from scipy.fft import idct
+
+# Load the tokenizer from the Hugging Face hub
+tokenizer = AutoProcessor.from_pretrained("physical-intelligence/fast", trust_remote_code=True)
+tokenizer.action_dim = 16
+tokenizer.time_horizon = 10
+# import pdb; pdb.set_trace()
+tokens = [271, 678, 271, 652, 293, 533, 266, 424, 272, 553, 584, 266, 424, 256, 537, 1833, 263, 224, 256, 473, 310, 769, 268, 238, 1061, 775, 1099, 293, 438, 268, 247, 286, 485, 521, 311, 268, 106, 287, 544, 438, 593, 408, 286, 311, 403, 593, 268, 248, 287, 665, 273, 862, 862, 286, 311, 356, 287, 286, 287, 403, 310, 593, 1506, 258, 485, 274, 777]
+actions = tokenizer.decode([tokens])
+import matplotlib.pyplot as plt
+
+# Create a figure with 16 subplots (one for each dimension)
+fig, axes = plt.subplots(4, 4, figsize=(15, 15))
+fig.suptitle('Action Trajectories')
+
+# Flatten actions to 10x16 (remove batch dimension)
+action_trajectories = actions[0]
+
+# Create time points
+time_points = np.arange(tokenizer.time_horizon)
+
+# Plot each dimension
+for dim in range(tokenizer.action_dim):
+    row = dim // 4
+    col = dim % 4
+    axes[row, col].plot(time_points, action_trajectories[:, dim])
+    axes[row, col].set_title(f'Dimension {dim}')
+    axes[row, col].grid(True)
+    
+# Adjust layout and save
+plt.tight_layout()
+plt.savefig('action_trajectories_base_fast.png')
+plt.close()
+
+decoded_tokens = tokenizer.bpe_tokenizer.decode(tokens)
+decoded_dct_coeff = np.array(list(map(ord, decoded_tokens))) + tokenizer.min_token
+decoded_dct_coeff = decoded_dct_coeff.reshape(-1, tokenizer.action_dim)
+decoded_dct_coeff_ = np.zeros((tokenizer.time_horizon, tokenizer.action_dim))
+
+# Control how many frequency bins to keep
+for i in range(tokenizer.time_horizon):
+    decoded_dct_coeff_[:i+1] = decoded_dct_coeff[:i+1]  # Keep only first num_freq_bins frequencies
+
+    action_trajectories = idct(decoded_dct_coeff_ / tokenizer.scale, axis=0, norm="ortho")
+    # Create a figure with 16 subplots (one for each dimension)
+    fig, axes = plt.subplots(4, 4, figsize=(15, 15))
+    fig.suptitle('Action Trajectories')
+    time_points = np.arange(tokenizer.time_horizon)
+    # Plot each dimension
+    for dim in range(tokenizer.action_dim):
+        row = dim // 4
+        col = dim % 4
+        axes[row, col].plot(time_points, action_trajectories[:, dim])
+        axes[row, col].set_title(f'Dimension {dim}')
+        axes[row, col].grid(True)
+        
+        # Adjust layout and save
+    plt.tight_layout()
+    plt.savefig(f'action_trajectories_base_fast_coeff_{i}.png')
+    plt.close()
