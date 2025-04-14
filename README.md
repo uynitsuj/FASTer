@@ -14,7 +14,7 @@ The Discrete Cosine Transform (DCT) is a frequency-domain transformation techniq
 
 ### Why DCT for Robot Actions?
 
-Robot action trajectories often contain smooth, continuous movements across multiple dimensions. When transformed into the frequency domain using DCT most of the signal's energy gets concentrated in the lower frequency components and the DCT naturally captures the temporal corellation of action sequences at high control frequencies.
+Robot action trajectories often contain smooth, continuous movements across multiple dimensions. When transformed into the frequency domain using DCT most of the signal's energy gets concentrated in the lower frequency components and the DCT naturally captures the temporal correlation of action sequences at high control frequencies.
 
 ## The DCT Early Stopping Technique
 
