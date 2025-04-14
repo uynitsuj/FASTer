@@ -1,4 +1,4 @@
-My custom implementation for DCT (Discrete Cosine Transform) early stopping technique in FAST (Frequency-Space Action Sequence Tokenization) to decode only the first few DCT coefficients from PaLi-Gemma rather than waiting for a full action chunk inference to complete. This can cut down inference to action time by roughly half since around the first 3-4 frequency coefficients of the DCT are typically enough for a coarse action sequence reconstruction.
+My custom implementation of a DCT (Discrete Cosine Transform) early stopping technique in FAST (Frequency-Space Action Sequence Tokenization) to decrease observation-to-action latency. The idea is to decode only the first few DCT coefficients from the PaLi-Gemma VLM rather than waiting for a full action chunk inference to complete. This can cut down inference to action time by roughly half since around the first 3-4 frequency coefficients of the DCT are typically enough for a coarse action sequence reconstruction.
 
 # FAST: Efficient Action Tokenization for Vision-Language-Action Models
 
