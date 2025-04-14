@@ -14,11 +14,6 @@ def benchmark_dct_implementations(size=1024, num_trials=100):
     # Generate random test data
     data = np.random.random((size, size)).astype(np.float32)
     data_gpu = cp.asarray(data)
-    
-    # Warm up GPU
-    # with scipy.fft.set_backend(cufft):
-    #     _ = scipy.fft.dct(data_gpu)
-    #     _ = scipy.fft.idct(data_gpu)
 
     # Benchmark scipy DCT
     start = time.time()
