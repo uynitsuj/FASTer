@@ -91,16 +91,6 @@ class UniversalActionProcessor(ProcessorMixin):
                                 
                 decoded_dct_coeff[:i] = _decoded_dct_coeff
                 
-                # Commented out assert for DCT early stopping; resulting DCT coeffs don't include all frequency bins
-                
-                # assert ( 
-                #     decoded_dct_coeff.shape
-                #     == (
-                #         self.time_horizon,
-                #         self.action_dim,
-                #     )
-                # ), f"Decoded DCT coefficients have shape {decoded_dct_coeff.shape}, expected ({self.time_horizon}, {self.action_dim})"
-                
             except Exception as e:
                 print(f"Error decoding tokens: {e}")
                 print(f"Tokens: {token}")
