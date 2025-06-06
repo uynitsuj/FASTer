@@ -51,4 +51,4 @@ This shows reconstructions using only the 0th DCT coefficient (DC component). Th
 **Figure 3: Early Stopping (0th through 4th Harmonics)**
 This demonstrates reconstruction using the 0th through 4th harmonics. Notice how it approximates the overall shape and critical movements from Figure 1, despite using less than half of the coefficients. The major action components - like the significant drops in Dimensions 1, 3, 5, and 9 - are clearly captured.
 
-Caveat: Fewer DCT harmonics translates to a slightly higher action-sequence reconstruction error. Action accuracy is ever-so-slightly reduced.
+Caveat: Fewer DCT harmonics translates to a slightly larger action-sequence reconstruction error. Action accuracy is ever-so-slightly reduced.
